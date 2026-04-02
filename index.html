@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جدول التلاميذ - المرحلة الثانية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Cairo:wght@400;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a5f7a;
+            --secondary-color: #159895;
+            --accent-color: #57c5b6;
+            --border-color: #000;
+            --header-bg: #e8f4f8;
+            --row-hover: #f0f9ff;
+            --current-font: 'Tajawal', sans-serif;
+            --current-font-size: 12px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: var(--current-font);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        /* لوحة التحكم */
+        .control-panel {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .control-panel h3 { margin: 0 0 15px 0; font-size: 18px; }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .control-group { display: flex; flex-direction: column; gap: 5px; }
+        .control-group label { font-size: 12px; opacity: 0.9; }
+
+        input, select, textarea {
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            font-family: var(--current-font);
+            font-size: 14px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: white;
+            background: white;
+            color: #333;
+        }
+
+        .custom-subject-input {
+            display: none;
+            margin-top: 5px;
+        }
+
+        .custom-subject-input.active {
+            display: block;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: var(--current-font);
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+        .btn-add { background: #27ae60; color: white; }
+        .btn-print { background: #2980b9; color: white; }
+        .btn-word { background: #2980b9; color: white; }
+        .btn-empty { background: #8e44ad; color: white; }
+        .btn-clear { background: #c0392b; color: white; }
+        .btn-help { background: #34495e; color: white; }
+
+        /* ترويسة الجدول */
+        .schedule-header {
+            text-align: center;
+            border: 3px solid var(--border-color);
+            padding: 15px;
+            margin-bottom: 15px;
+            background: var(--header-bg);
+            border-radius: 5px;
+        }
+
+        .schedule-header h1 {
+            margin: 5px 0;
+            font-size: 24px;
+            color: var(--primary-color);
+            cursor: text;
+            border: 1px dashed transparent;
+            display: inline-block;
+            padding: 5px;
+        }
+
+        .schedule-header h1:hover, .schedule-header h1:focus {
+            border-color: #999;
+            background: white;
+            outline: none;
+        }
+
+        .schedule-header h2 {
+            margin: 5px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .header-inputs {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header-inputs input {
+            text-align: center;
+            font-weight: bold;
+            background: white;
+            border: 1px solid #ccc;
+            min-width: 200px;
+        }
+
+        /* الجدول - تحسينات التجاوب */
+        .table-container {
+            overflow-x: auto;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--current-font-size);
+            table-layout: fixed; /* مهم جداً للتجاوب */
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 10px 6px;
+            border: 2px solid var(--border-color);
+            font-weight: bold;
+            text-align: center;
+            font-size: calc(var(--current-font-size) - 1px);
+            word-wrap: break-word;
+        }
+
+        td {
+            border: 1px solid var(--border-color);
+            padding: 6px 4px;
+            vertical-align: top;
+            min-height: 40px;
+            position: relative;
+            font-size: var(--current-font-size);
+            line-height: 1.4;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        /* توزيع أعمدة متجاوب */
+        th:nth-child(2) { width: 12%; } /* المادة */
+        th:nth-child(3) { width: 45%; } /* الدروس */
+        th:nth-child(4) { width: 28%; } /* المراجع */
+        th:nth-child(5) { width: 15%; } /* التاريخ */
+
+        /* خلايا قابلة للتعديل */
+        td[contenteditable="true"]:hover {
+            background: var(--row-hover);
+            cursor: text;
+        }
+
+        td[contenteditable="true"]:focus {
+            background: #fff;
+            outline: 2px solid var(--accent-color);
+            outline-offset: -2px;
+        }
+
+        .subject-cell {
+            background: #e8f4f8;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* أزرار التحكم في الصفوف */
+        .row-controls {
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            display: flex;
+            gap: 3px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        tr:hover .row-controls { opacity: 1; }
+
+        .row-btn {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            font-size: 12px;
+            border-radius: 3px;
+        }
+
+        .row-btn-delete { background: #e74c3c; color: white; }
+        .row-btn-drag { background: #95a5a6; color: white; cursor: move; }
+        .row-btn-add { background: #27ae60; color: white; }
+
+        tr.draggable { cursor: move; }
+        tr.dragging { opacity: 0.5; background: #ffeaa7; }
+        tr.drag-over { border-top: 3px solid var(--accent-color); }
+
+        /* تنسيق الطباعة - متجاوب تماماً */
+        @media print {
+            @page {
+                margin: 0.3cm;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-family: var(--current-font) !important;
+            }
+
+            .container {
+                box-shadow: none;
+                width: 100%;
+                max-width: 100%;
+                padding: 0;
+                margin: 0;
+            }
+
+            .control-panel, .no-print, .row-controls {
+                display: none !important;
+            }
+
+            .schedule-header {
+                border: 2px solid #000;
+                padding: 8px;
+                margin-bottom: 8px;
+                background: #f0f0f0 !important;
+            }
+
+            .schedule-header h1 { 
+                font-size: 18px; 
+                margin: 3px 0; 
+                border: none;
+                color: #000;
+            }
+            
+            .schedule-header h2 { font-size: 13px; margin: 3px 0; }
+
+            .header-inputs input {
+                border: none;
+                border-bottom: 1px solid #000;
+                background: transparent;
+                font-size: 12px;
+                padding: 3px;
+            }
+
+            .table-container {
+                border: 1px solid #000;
+                overflow: visible;
+                width: 100%;
+            }
+
+            table {
+                width: 100%;
+                font-size: var(--current-font-size) !important;
+                page-break-inside: auto;
+                table-layout: fixed;
+            }
+
+            th {
+                padding: 6px 4px;
+                font-size: calc(var(--current-font-size) - 1px) !important;
+                background: #ddd !important;
+                color: #000 !important;
+                border: 1px solid #000;
+                -webkit-print-color-adjust: exact;
+                word-wrap: break-word;
+            }
+
+            td {
+                padding: 5px 4px;
+                border: 1px solid #000;
+                line-height: 1.3;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+                font-size: var(--current-font-size) !important;
+                white-space: normal !important;
+                height: auto !important;
+            }
+
+            tr { page-break-inside: avoid; }
+
+            .subject-cell {
+                background: #ccc !important;
+                -webkit-print-color-adjust: exact;
+            }
+
+            /* ضمان ظهور المحتوى الكامل */
+            td, th {
+                display: table-cell !important;
+                visibility: visible !important;
+            }
+        }
+
+        .status-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .auto-date-control, .print-options, .font-options {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .auto-date-control label, .print-options label, .font-options label { 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+        }
+
+        .print-options select, .font-options select { 
+            background: white; 
+            color: #333; 
+            padding: 5px 10px;
+            min-width: 120px;
+        }
+
+        .font-options input[type="range"] {
+            min-width: 100px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- لوحة التحكم -->
+    <div class="control-panel no-print">
+        <h3>📋 لوحة التحكم - إضافة وتعديل الجدول</h3>
+        
+        <div class="control-grid">
+            <div class="control-group">
+                <label>المادة</label>
+                <select id="inputSubject" onchange="toggleCustomSubject()">
+                    <option value="الإملاء">الإملاء</option>
+                    <option value="فهم المقروء">فهم المقروء</option>
+                    <option value="التعبير الكتابي">التعبير الكتابي</option>
+                    <option value="التربية الإسلامية عام">التربية الإسلامية عام</option>
+                    <option value="التربية الإسلامية أصيل">التربية الإسلامية أصيل</option>
+                    <option value="الإجتماعيات">الإجتماعيات</option>
+                    <option value="التطبيقات الكتابية">التطبيقات الكتابية</option>
+                    <option value="التربية الفنية">التربية الفنية</option>
+                    <option value="النشاط العلمي">النشاط العلمي</option>
+                    <option value="الرياضيات">الرياضيات</option>
+                    <option value="Dictée">Dictée (Français)</option>
+                    <option value="Activités de lecture">Activités de lecture</option>
+                    <option value="Conjugaison">Conjugaison</option>
+                    <option value="Grammaire">Grammaire</option>
+                    <option value="Lexique">Lexique</option>
+                    <option value="Production écrite">Production écrite</option>
+                    <option value="custom">مخصص (اكتب يدوياً)</option>
+                </select>
+                <input type="text" id="customSubjectInput" class="custom-subject-input" placeholder="اكتب اسم المادة هنا...">
+            </div>
+            <div class="control-group">
+                <label>المكونات الفرعية (كل مكون في سطر)</label>
+                <textarea id="inputComponents" rows="3" placeholder="مثال:&#10;القرآن الكريم&#10;التزكية&#10;الاقتداء"></textarea>
+            </div>
+            <div class="control-group">
+                <label>المراجع</label>
+                <textarea id="inputRef" rows="2" placeholder="كتاب التلميذ، دفتر..."></textarea>
+            </div>
+            <div class="control-group">
+                <label>تاريخ الإجراء</label>
+                <input type="text" id="inputDate" placeholder="مثال: 12/24/25">
+            </div>
+        </div>
+
+        <div class="auto-date-control">
+            <label>
+                <input type="checkbox" id="autoDate" checked>
+                تكرار التاريخ تلقائياً
+            </label>
+        </div>
+
+        <div class="font-options">
+            <span>🔤 إعدادات الخط:</span>
+            <label>
+                نوع الخط:
+                <select id="fontFamily" onchange="changeFont()">
+                    <option value="'Tajawal', sans-serif">تجوال (Tajawal)</option>
+                    <option value="'Cairo', sans-serif">كايرو (Cairo)</option>
+                    <option value="'Amiri', serif">أميري (Amiri)</option>
+                    <option value="Arial, sans-serif">Arial</option>
+                    <option value="Times New Roman, serif">Times New Roman</option>
+                </select>
+            </label>
+            <label>
+                حجم الخط: <span id="fontSizeValue">12px</span>
+                <input type="range" id="fontSize" min="9" max="18" value="12" onchange="changeFontSize()">
+            </label>
+        </div>
+
+        <div class="print-options">
+            <span>⚙️ إعدادات الطباعة:</span>
+            <label>
+                اتجاه الصفحة:
+                <select id="printOrientation">
+                    <option value="portrait">عمودي (Portrait)</option>
+                    <option value="landscape">أفقي (Landscape)</option>
+                </select>
+            </label>
+            <label>
+                <input type="checkbox" id="fitToPage" checked>
+                ملاءمة للصفحة تلقائياً
+            </label>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-add" onclick="addLesson()">➕ إضافة صف</button>
+            <button class="btn-print" onclick="printTable()">🖨️ طباعة / PDF</button>
+            <button class="btn-word" onclick="exportToWord()">📝 تصدير Word</button>
+            <button class="btn-empty" onclick="emptyTable()">🗑️ إفراغ الجدول</button>
+            <button class="btn-clear" onclick="clearData()">🔄 استعادة الافتراضي</button>
+            <button class="btn-help" onclick="showHelp()">❓ مساعدة</button>
+        </div>
+
+        <div class="status-bar">
+            <span id="rowCount">عدد الصفوف: 0</span>
+            <span id="lastSaved">آخر حفظ: --</span>
+            <span>💾 الحفظ تلقائي في المتصفح</span>
+        </div>
+    </div>
+
+    <!-- رأس الجدول -->
+    <div class="schedule-header" id="headerSection">
+        <div class="header-inputs">
+            <input type="text" id="schoolName" value="مؤسسة بلادي - طنجة" placeholder="اسم المؤسسة">
+            <input type="text" id="schoolYear" value="السنة الدراسية 2026/2025" placeholder="السنة الدراسية">
+        </div>
+        <h1 contenteditable="true" onblur="saveHeaderInfo()">جدول التلاميذ للمرحلة الثانية</h1>
+        <div class="header-inputs">
+            <input type="text" id="level" value="المستوى: الرابع ابتدائي" placeholder="المستوى الدراسي">
+            <input type="text" id="stage" value="المرحلة الثانية" placeholder="المرحلة">
+        </div>
+    </div>
+
+    <!-- جدول البيانات -->
+    <div class="table-container" id="tableContainer">
+        <table id="scheduleTable">
+            <thead>
+                <tr>
+                    <th style="width: 5%;" class="no-print">⋮⋮</th>
+                    <th>المادة</th>
+                    <th>الدروس والمواضيع</th>
+                    <th>المراجع</th>
+                    <th>تاريخ الإجراء</th>
+                    <th style="width: 5%;" class="no-print">⚙️</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- سيتم ملء البيانات هنا -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // البيانات الافتراضية
+    const defaultData = [
+        { date: "12/24/25", ref: "دفتر التطبيقات (الأزرق)+ دفتر الدروس الوردي.\nكتاب التلميذ:\nأوراق التمارين التقويمية", topic: "الوصل والقطع.\n- الهمزة المتوسطة على الألف والواو", subject: "الإملاء" },
+        { date: "12/26/25", ref: "دفتر التطبيقات (الأزرق)+ دفتر الدروس الوردي.\nكتاب التلميذ", topic: "الهوايات (نص مذيل بأسئلة)", subject: "فهم المقروء" },
+        { date: "", ref: "", topic: "مجال الحياة الثقافية والفنية+ مجال الهوايات ( التلخيص+التعليق.)", subject: "التعبير الكتابي" },
+        { date: "29/12/2025", ref: "كتاب التلميذ + دفتر الدروس", topic: "القرآن الكريم: سورة الطارق وعبس\nتزكية (العقيدة) : الله القادر المنعم\nالاقتداء : رعاية الله وحفظه لرسوله", subject: "التربية الإسلامية عام" },
+        { date: "", ref: "كتاب التلميذ + دفتر الدروس", topic: "السيرة :بعوث النبي صلى الله عليه وسلم\nالحديث : الأمانة - الوفاء بالعهد\nالفقه : شروط الصلاة - فرائض الصلاة", subject: "التربية الإسلامية أصيل" },
+        { date: "30/01/2026", ref: "الدفتر الرمادي +كتاب التلميذ", topic: "التاريخ :تاريخ عائلتي :شجرة العائلة\nالجغرافيا : حيينا مدينتنا\nالتربية المدنية :نضع ميثاقا لقسمنا", subject: "الإجتماعيات" },
+        { date: "02/01/2026", ref: "دفتر التطبيقات + كتاب التلميذ", topic: "التراكيب :الفعل اللازم والمتعدي\nالصرف : الفعل الصحيح والمعتل", subject: "التطبيقات الكتابية" },
+        { date: "12/18/25", ref: "كتاب التلميذ ص 30-35", topic: "الفن المعماري + الفن والطبيعة", subject: "التربية الفنية" },
+        { date: "12/29/25", ref: "كتاب التلميذ ص 27-39 + تقويم تكويني", topic: "تغيرات المادة + الضوء والالوان + خصائص الكائنات الحية", subject: "النشاط العلمي" },
+        { date: "12/31/25", ref: "كتاب التلميذ ص 35-52 + تقويم + دفتر الدروس", topic: "الأعداد الكسرية + الضرب + جمع وطرح + قياس الكتل", subject: "الرياضيات" },
+        { date: "12/23/25", ref: "Manuel pages : 54-72\nCahier d'activités : 28-33", topic: "Les homonymes : a /à /as - on / ont", subject: "Dictée" },
+        { date: "12/25/25", ref: "Exercices de consolidation", topic: "Lire et comprendre un texte", subject: "Activités de lecture" },
+        { date: "12/30/25", ref: "Manuel: La magie page:52\nCahier d'activités page :27", topic: "Les verbes du 1 groupe à l'imparfait", subject: "Conjugaison" },
+        { date: "12/31/25", ref: "Manuel: La magie pages:50-68\nCahier d'activités : 26", topic: "La ponctuation\nLes noms et les déterminants", subject: "Grammaire" },
+        { date: "02/01/2026", ref: "Manuel: La magie pages: 56-74\nCahier d'activités : 29-34", topic: "Les mots génériques\nLe sens propre et figuré", subject: "Lexique" },
+        { date: "", ref: "Manuel: Mes apprentissages pages: 47-52", topic: "Reconstituer un texte desciptif\nReconstituer un texte narratif", subject: "Production écrite" }
+    ];
+
+    let lessons = JSON.parse(localStorage.getItem('scheduleData')) || [...defaultData];
+    let draggedRow = null;
+
+    // إظهار/إخفاء حقل المادة المخصصة
+    function toggleCustomSubject() {
+        const select = document.getElementById('inputSubject');
+        const customInput = document.getElementById('customSubjectInput');
+        if(select.value === 'custom') {
+            customInput.classList.add('active');
+            customInput.focus();
+        } else {
+            customInput.classList.remove('active');
+        }
+    }
+
+    // تغيير نوع الخط
+    function changeFont() {
+        const font = document.getElementById('fontFamily').value;
+        document.documentElement.style.setProperty('--current-font', font);
+        localStorage.setItem('userFont', font);
+    }
+
+    // تغيير حجم الخط
+    function changeFontSize() {
+        const size = document.getElementById('fontSize').value + 'px';
+        document.getElementById('fontSizeValue').textContent = size;
+        document.documentElement.style.setProperty('--current-font-size', size);
+        localStorage.setItem('userFontSize', size);
+    }
+
+    // استرجاع إعدادات الخط
+    function loadFontSettings() {
+        const savedFont = localStorage.getItem('userFont');
+        const savedSize = localStorage.getItem('userFontSize');
+        
+        if(savedFont) {
+            document.getElementById('fontFamily').value = savedFont;
+            document.documentElement.style.setProperty('--current-font', savedFont);
+        }
+        
+        if(savedSize) {
+            document.getElementById('fontSize').value = parseInt(savedSize);
+            document.getElementById('fontSizeValue').textContent = savedSize;
+            document.documentElement.style.setProperty('--current-font-size', savedSize);
+        }
+    }
+
+    // تهيئة الرأس
+    function initHeaderInputs() {
+        const inputs = document.querySelectorAll('.header-inputs input');
+        inputs.forEach(input => {
+            input.addEventListener('input', saveHeaderInfo);
+            const saved = localStorage.getItem('header_' + input.id);
+            if(saved) input.value = saved;
+        });
+        
+        const savedTitle = localStorage.getItem('mainTitle');
+        if(savedTitle) {
+            document.querySelector('.schedule-header h1').textContent = savedTitle;
+        }
+    }
+
+    function saveHeaderInfo() {
+        const inputs = document.querySelectorAll('.header-inputs input');
+        inputs.forEach(input => {
+            localStorage.setItem('header_' + input.id, input.value);
+        });
+        const title = document.querySelector('.schedule-header h1').textContent;
+        localStorage.setItem('mainTitle', title);
+        updateLastSaved();
+    }
+
+    // عرض الجدول
+    function renderTable() {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+
+        lessons.forEach((lesson, index) => {
+            const row = document.createElement('tr');
+            row.className = 'draggable';
+            row.setAttribute('data-index', index);
+            row.draggable = true;
+
+            row.innerHTML = `
+                <td class="no-print" style="text-align: center;">
+                    <div class="row-controls" style="position: static; opacity: 1;">
+                        <button class="row-btn row-btn-drag" title="سحب">⋮⋮</button>
+                        <button class="row-btn row-btn-add" title="إضافة فوق" onclick="addRowAbove(${index})">+</button>
+                        <button class="row-btn row-btn-delete" title="حذف" onclick="deleteLesson(${index})">✕</button>
+                    </div>
+                </td>
+                <td contenteditable="true" onblur="updateData(${index}, 'subject', this)" class="subject-cell">${lesson.subject || ''}</td>
+                <td contenteditable="true" onblur="updateData(${index}, 'topic', this)" style="white-space: pre-line;">${lesson.topic || ''}</td>
+                <td contenteditable="true" onblur="updateData(${index}, 'ref', this)" style="white-space: pre-line;">${lesson.ref || ''}</td>
+                <td contenteditable="true" onblur="updateData(${index}, 'date', this)">${lesson.date || ''}</td>
+                <td class="no-print" style="text-align: center;">
+                    <button class="row-btn row-btn-add" title="إضافة تحت" onclick="addRowBelow(${index})" style="background: #3498db;">+</button>
+                </td>
+            `;
+
+            row.addEventListener('dragstart', handleDragStart);
+            row.addEventListener('dragend', handleDragEnd);
+            row.addEventListener('dragover', handleDragOver);
+            row.addEventListener('dragleave', handleDragLeave);
+            row.addEventListener('drop', handleDrop);
+
+            tbody.appendChild(row);
+        });
+
+        updateRowCount();
+    }
+
+    function updateData(index, field, element) {
+        lessons[index][field] = element.textContent.trim();
+        saveData();
+    }
+
+    function addLesson() {
+        const date = document.getElementById('inputDate').value;
+        let subject = document.getElementById('inputSubject').value;
+        
+        if(subject === 'custom') {
+            subject = document.getElementById('customSubjectInput').value.trim();
+            if(!subject) {
+                alert('الرجاء كتابة اسم المادة المخصصة');
+                return;
+            }
+        }
+        
+        const components = document.getElementById('inputComponents').value;
+        const ref = document.getElementById('inputRef').value;
+
+        if(!components && !subject) {
+            alert('الرجاء إدخال المكونات أو المادة على الأقل');
+            return;
+        }
+
+        const topic = components.split('\n').filter(c => c.trim()).map(c => '- ' + c.trim()).join('\n');
+
+        lessons.push({ date, subject, topic, ref });
+        saveData();
+        renderTable();
+
+        document.getElementById('inputComponents').value = '';
+        document.getElementById('inputRef').value = '';
+        document.getElementById('customSubjectInput').value = '';
+        document.getElementById('inputSubject').value = 'الإملاء';
+        toggleCustomSubject();
+        
+        if(!document.getElementById('autoDate').checked) {
+            document.getElementById('inputDate').value = '';
+        }
+        updateLastSaved();
+    }
+
+    function addRowAbove(index) {
+        lessons.splice(index, 0, { date: '', subject: '', topic: '', ref: '' });
+        saveData();
+        renderTable();
+    }
+
+    function addRowBelow(index) {
+        lessons.splice(index + 1, 0, { date: '', subject: '', topic: '', ref: '' });
+        saveData();
+        renderTable();
+    }
+
+    function deleteLesson(index) {
+        if(confirm('هل أنت متأكد من حذف هذا الصف؟')) {
+            lessons.splice(index, 1);
+            saveData();
+            renderTable();
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('scheduleData', JSON.stringify(lessons));
+    }
+
+    function clearData() {
+        if(confirm('⚠️ تحذير: سيتم استعادة البيانات الافتراضية. هل أنت متأكد؟')) {
+            localStorage.removeItem('scheduleData');
+            lessons = [...defaultData];
+            renderTable();
+        }
+    }
+
+    function emptyTable() {
+        if(confirm('⚠️ تحذير خطير: سيتم حذف جميع البيانات تماماً. هل أنت متأكد؟')) {
+            if(confirm('تأكيد نهائي: هل أنت متأكد تماماً من إفراغ الجدول؟')) {
+                localStorage.removeItem('scheduleData');
+                lessons = [];
+                renderTable();
+                alert('✅ تم إفراغ الجدول بنجاح');
+            }
+        }
+    }
+
+    // السحب والإفلات
+    function handleDragStart(e) {
+        draggedRow = this;
+        this.classList.add('dragging');
+    }
+
+    function handleDragEnd(e) {
+        this.classList.remove('dragging');
+        document.querySelectorAll('tr').forEach(row => row.classList.remove('drag-over'));
+        draggedRow = null;
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        this.classList.add('drag-over');
+    }
+
+    function handleDragLeave(e) {
+        this.classList.remove('drag-over');
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        this.classList.remove('drag-over');
+
+        if(draggedRow && this !== draggedRow) {
+            const fromIndex = parseInt(draggedRow.getAttribute('data-index'));
+            const toIndex = parseInt(this.getAttribute('data-index'));
+            const [movedItem] = lessons.splice(fromIndex, 1);
+            lessons.splice(toIndex, 0, movedItem);
+            saveData();
+            renderTable();
+        }
+    }
+
+    function updateRowCount() {
+        document.getElementById('rowCount').textContent = `عدد الصفوف: ${lessons.length}`;
+    }
+
+    function updateLastSaved() {
+        const now = new Date();
+        document.getElementById('lastSaved').textContent = `آخر حفظ: ${now.toLocaleTimeString('ar-MA', {hour: '2-digit', minute: '2-digit'})}`;
+    }
+
+    // طباعة مع تحسينات
+    function printTable() {
+        const orientation = document.getElementById('printOrientation').value;
+        const fitToPage = document.getElementById('fitToPage').checked;
+        
+        const style = document.createElement('style');
+        style.id = 'printOrientationStyle';
+        
+        let sizeStyle = `@page { size: A4 ${orientation}; margin: 0.3cm; }`;
+        
+        if(fitToPage && orientation === 'landscape') {
+            sizeStyle += `
+                table { width: 100% !important; transform: none !important; }
+                td, th { word-wrap: break-word !important; white-space: normal !important; }
+            `;
+        }
+        
+        style.textContent = sizeStyle;
+        document.head.appendChild(style);
+        
+        window.print();
+        
+        setTimeout(() => {
+            style.remove();
+        }, 1000);
+    }
+
+    // تصدير Word
+    function exportToWord() {
+        const schoolName = document.getElementById('schoolName').value;
+        const schoolYear = document.getElementById('schoolYear').value;
+        const title = document.querySelector('.schedule-header h1').textContent;
+        const level = document.getElementById('level').value;
+        const stage = document.getElementById('stage').value;
+        const fontFamily = document.getElementById('fontFamily').value.replace(/'/g, '');
+
+        let wordContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+                  xmlns:w='urn:schemas-microsoft-com:office:word' 
+                  xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset='utf-8'>
+                <style>
+                    @page { size: A4 portrait; margin: 0.5cm; }
+                    body { 
+                        font-family: '${fontFamily}', 'Arial', sans-serif; 
+                        direction: rtl; 
+                        text-align: center;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    table { 
+                        border-collapse: collapse; 
+                        width: 100%; 
+                        margin: 10px auto;
+                        table-layout: fixed;
+                    }
+                    th, td { 
+                        border: 1px solid #000; 
+                        padding: 5px; 
+                        text-align: right; 
+                        vertical-align: top;
+                        font-size: 11px;
+                        word-wrap: break-word;
+                    }
+                    th { 
+                        background-color: #ddd; 
+                        font-weight: bold;
+                        text-align: center;
+                    }
+                    h1 { text-align: center; font-size: 16px; margin: 8px 0; }
+                    h2 { text-align: center; font-size: 12px; margin: 4px 0; }
+                    .header { 
+                        text-align: center; 
+                        margin-bottom: 10px; 
+                        border: 2px solid #000; 
+                        padding: 8px;
+                        width: 95%;
+                        margin-left: auto;
+                        margin-right: auto;
+                    }
+                    p { text-align: center; margin: 5px 0; font-size: 11px; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h2>${schoolName}</h2>
+                    <h2>${schoolYear}</h2>
+                    <h1>${title}</h1>
+                    <p>${level} - ${stage}</p>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 12%;">المادة</th>
+                            <th style="width: 45%;">الدروس والمواضيع</th>
+                            <th style="width: 28%;">المراجع</th>
+                            <th style="width: 15%;">تاريخ الإجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        lessons.forEach(row => {
+            wordContent += `
+                <tr>
+                    <td>${row.subject || ''}</td>
+                    <td>${(row.topic || '').replace(/\n/g, '<br>')}</td>
+                    <td>${(row.ref || '').replace(/\n/g, '<br>')}</td>
+                    <td>${row.date || ''}</td>
+                </tr>
+            `;
+        });
+
+        wordContent += `</tbody></table></body></html>`;
+
+        const blob = new Blob(['\ufeff', wordContent], { type: 'application/msword' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `جدول_التلاميذ_${new Date().toISOString().slice(0,10)}.doc`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        alert('✅ تم تصدير Word بنجاح!');
+    }
+
+    function showHelp() {
+        alert(`📖 دليل الاستخدام:
+
+✏️ التعديل المباشر:
+- انقر على أي خلية في الجدول للتعديل
+
+🔤 إعدادات الخط:
+- غيّر نوع الخط من القائمة (تجوال، كايرو، أميري...)
+- غيّر حجم الخط باستخدام شريط التمرير
+- الإعدادات تحفظ تلقائياً
+
+🖨️ الطباعة / PDF:
+- اختر الاتجاه (عمودي أو أفقي)
+- فعّل "ملاءمة للصفحة" لملء العرض
+- اضغط "طباعة / PDF" واختر "حفظ كـ PDF"
+
+📊 التجاوب:
+- الجدول يتمدد تلقائياً ليملأ الصفحة
+- النصوص الطويلة تظهر كاملة بدون قص`);
+    }
+
+    // التهيئة
+    window.onload = function() {
+        initHeaderInputs();
+        loadFontSettings();
+        renderTable();
+        updateLastSaved();
+    };
+</script>
+
+</body>
+</html>
