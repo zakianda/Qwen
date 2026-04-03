@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأستاذ أحمد محمد - معلم اللغة العربية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-dark: #1a1a2e;
+            --secondary-dark: #16213e;
+            --accent-dark: #0f3460;
+            --gold: #c9a227;
+            --gold-light: #e8c547;
+            --text-light: #f5f5f5;
+            --text-muted: #b0b0b0;
+            --card-bg: #1f2940;
+            --hover-bg: #2d3a5a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 50%, var(--accent-dark) 100%);
+            color: var(--text-light);
+            min-height: 100vh;
+            line-height: 1.8;
+        }
+
+        /* القائمة العلوية */
+        header {
+            background: rgba(26, 26, 46, 0.95);
+            padding: 15px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        .logo-text h1 {
+            font-family: 'Amiri', serif;
+            font-size: 24px;
+            color: var(--gold);
+        }
+
+        .logo-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 15px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            color: var(--gold);
+            background: rgba(201, 162, 39, 0.1);
+        }
+
+        /* القسم الرئيسي */
+        .hero {
+            margin-top: 80px;
+            padding: 100px 20px;
+            text-align: center;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23c9a227" stroke-width="0.5" opacity="0.1"/></svg>') repeat;
+        }
+
+        .hero h2 {
+            font-family: 'Amiri', serif;
+            font-size: 48px;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: var(--text-muted);
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--primary-dark);
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(201, 162, 39, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(201, 162, 39, 0.5);
+        }
+
+        /* الأقسام */
+        section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-family: 'Amiri', serif;
+            font-size: 36px;
+            color: var(--gold);
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--gold);
+            margin: 15px auto 0;
+        }
+
+        /* البطاقات */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(201, 162, 39, 0.2);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            background: var(--hover-bg);
+            border-color: var(--gold);
+            box-shadow: 0 8px 25px rgba(201, 162, 39, 0.2);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+        }
+
+        .card h3 {
+            font-size: 22px;
+            color: var(--gold);
+            margin-bottom: 15px;
+            font-family: 'Amiri', serif;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .card-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.3s ease;
+        }
+
+        .card-link:hover {
+            gap: 10px;
+        }
+
+        /* قسم الدروس */
+        .lessons-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .lesson-item {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.3s ease;
+            border-right: 4px solid var(--gold);
+        }
+
+        .lesson-item:hover {
+            background: var(--hover-bg);
+            transform: translateX(-5px);
+        }
+
+        .lesson-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            color: var(--primary-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .lesson-content {
+            flex: 1;
+        }
+
+        .lesson-content h4 {
+            color: var(--text-light);
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .lesson-content p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .lesson-badge {
+            background: var(--accent-dark);
+            color: var(--gold);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* قسم الموارد */
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .resource-item {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .resource-item:hover {
+            background: var(--hover-bg);
+            transform: scale(1.05);
+        }
+
+        .resource-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .resource-item h4 {
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+
+        .resource-item p {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        <!-- نموذج التواصل -->
+        .contact-form {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--gold);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid rgba(201, 162, 39, 0.3);
+            border-radius: 8px;
+            background: var(--secondary-dark);
+            color: var(--text-light);
+            font-family: 'Tajawal', sans-serif;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light));
+            color: var(--primary-dark);
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(201, 162, 39, 0.4);
+        }
+
+        /* التذييل */
+        footer {
+            background: var(--primary-dark);
+            padding: 40px 20px;
+            margin-top: 80px;
+            border-top: 3px solid var(--gold);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            color: var(--gold);
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-family: 'Amiri', serif;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: var(--text-muted);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--gold);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            background: var(--accent-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gold);
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--gold);
+            color: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid rgba(201, 162, 39, 0.2);
+            color: var(--text-muted);
+        }
+
+        /* التجاوب */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 15px;
+            }
+
+            .hero h2 {
+                font-size: 32px;
+            }
+
+            .hero p {
+                font-size: 16px;
+            }
+
+            .section-title {
+                font-size: 28px;
+            }
+
+            .lesson-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- القائمة العلوية -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">ع</div>
+                <div class="logo-text">
+                    <h1>الأستاذ أحمد محمد</h1>
+                    <p>معلم اللغة العربية</p>
+                </div>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#home">الرئيسية</a></li>
+                    <li><a href="#about">من أنا</a></li>
+                    <li><a href="#courses">الدروس</a></li>
+                    <li><a href="#resources">الموارد</a></li>
+                    <li><a href="#videos">الفيديوهات</a></li>
+                    <li><a href="#contact">تواصل معي</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- القسم الرئيسي -->
+    <section class="hero" id="home">
+        <h2>مرحباً بكم في موقع الأستاذ أحمد محمد</h2>
+        <p>منصة تعليمية متكاملة لتعليم اللغة العربية وآدابها للطلاب بجميع المراحل الدراسية. دروس شاملة، موارد تعليمية، وفيديوهات توضيحية.</p>
+        <a href="#courses" class="cta-button">ابدأ التعلم الآن</a>
+    </section>
+
+    <!-- قسم من أنا -->
+    <section id="about">
+        <h2 class="section-title">من أنا</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">👨‍🏫</div>
+                <h3>الخبرة التعليمية</h3>
+                <p>أستاذ لغة عربية بخبرة تزيد عن 15 عاماً في التدريس للمراحل الثانوية والإعدادية. حاصل على ماجستير في الأدب العربي من جامعة القاهرة.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <h3>التخصصات</h3>
+                <p>متخصص في النحو والصرف، البلاغة والنقد الأدبي، الشعر العربي القديم والحديث، والكتابة الإبداعية والتعبير.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h3>الرؤية التعليمية</h3>
+                <p>أسعى إلى تبسيط اللغة العربية وجعلها محببة للطلاب من خلال أساليب تدريس مبتكرة واستخدام التكنولوجيا الحديثة.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الدروس -->
+    <section id="courses">
+        <h2 class="section-title">الدروس المتاحة</h2>
+        <div class="lessons-list">
+            <div class="lesson-item">
+                <div class="lesson-number">1</div>
+                <div class="lesson-content">
+                    <h4>النحو العربي - المبتدأ والخبر</h4>
+                    <p>شرح مفصل لأحكام المبتدأ والخبر مع الأمثلة والتطبيقات العملية</p>
+                </div>
+                <span class="lesson-badge">نحو</span>
+            </div>
+            <div class="lesson-item">
+                <div class="lesson-number">2</div>
+                <div class="lesson-content">
+                    <h4>البلاغة - التشبيه والاستعارة</h4>
+                    <p>دراسة أنواع التشبيه والاستعارة مع نماذج من القرآن والشعر العربي</p>
+                </div>
+                <span class="lesson-badge">بلاغة</span>
+            </div>
+            <div class="lesson-item">
+                <div class="lesson-number">3</div>
+                <div class="lesson-content">
+                    <h4>الصرف - الأفعال الصحيحة والمعتلة</h4>
+                    <p>تصريف الأفعال الصحيحة والمعتلة مع التطبيقات العملية</p>
+                </div>
+                <span class="lesson-badge">صرف</span>
+            </div>
+            <div class="lesson-item">
+                <div class="lesson-number">4</div>
+                <div class="lesson-content">
+                    <h4>النقد الأدبي - مدارس النقد القديمة</h4>
+                    <p>جولة في مدارس النقد الأدبي عند العرب ومناهجهم</p>
+                </div>
+                <span class="lesson-badge">نقد أدبي</span>
+            </div>
+            <div class="lesson-item">
+                <div class="lesson-number">5</div>
+                <div class="lesson-content">
+                    <h4>الكتابة الإبداعية - فنون التعبير</h4>
+                    <p>تدريب عملي على فنون التعبير الكتابي والإنشاء</p>
+                </div>
+                <span class="lesson-badge">تعبير</span>
+            </div>
+            <div class="lesson-item">
+                <div class="lesson-number">6</div>
+                <div class="lesson-content">
+                    <h4>الشعر العربي - العصر الجاهلي</h4>
+                    <p>دراسة لأشهر الشعراء الجاهليين ومعلقاتهم</p>
+                </div>
+                <span class="lesson-badge">أدب</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الموارد -->
+    <section id="resources">
+        <h2 class="section-title">الموارد التعليمية</h2>
+        <div class="resources-grid">
+            <div class="resource-item">
+                <div class="resource-icon">📄</div>
+                <h4>ملخصات الدروس</h4>
+                <p>ملخصات مكتوبة لجميع الدروس بصيغة PDF</p>
+            </div>
+            <div class="resource-item">
+                <div class="resource-icon">📝</div>
+                <h4>تمارين تطبيقية</h4>
+                <p>مجموعة من التمارين المتنوعة مع الحلول</p>
+            </div>
+            <div class="resource-item">
+                <div class="resource-icon">📊</div>
+                <h4>اختبارات تقييمية</h4>
+                <p>اختبارات دورية لقياس مستوى التقدم</p>
+            </div>
+            <div class="resource-item">
+                <div class="resource-icon">📖</div>
+                <h4>قائمة المراجع</h4>
+                <p>أهم الكتب والمراجع الدراسية</p>
+            </div>
+            <div class="resource-item">
+                <div class="resource-icon">🎧</div>
+                <h4>دروس صوتية</h4>
+                <p>تسجيلات صوتية للدروس للاستماع</p>
+            </div>
+            <div class="resource-item">
+                <div class="resource-icon">💡</div>
+                <h4>نصائح دراسية</h4>
+                <p>إرشادات وطرق فعالة للمذاكرة</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الفيديوهات -->
+    <section id="videos">
+        <h2 class="section-title">الفيديوهات التعليمية</h2>
+        <div class="cards-grid">
+            <div class="card">
+                <div class="card-icon">🎬</div>
+                <h3>شرح إعراب الجمل</h3>
+                <p>سلسلة فيديوهات لشرح إعراب الجمل الاسمية والفعلية</p>
+                <a href="#" class="card-link">مشاهدة الفيديو ←</a>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎬</div>
+                <h3>دروس البلاغة المصورة</h3>
+                <p>شرح مصور لجميع أبواب البلاغة مع الأمثلة</p>
+                <a href="#" class="card-link">مشاهدة الفيديو ←</a>
+            </div>
+            <div class="card">
+                <div class="card-icon">🎬</div>
+                <h3>تحليل النصوص الأدبية</h3>
+                <p>طريقة منهجية لتحليل النصوص الشعرية والنثرية</p>
+                <a href="#" class="card-link">مشاهدة الفيديو ←</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم التواصل -->
+    <section id="contact">
+        <h2 class="section-title">تواصل معي</h2>
+        <div class="contact-form">
+            <form onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label for="name">الاسم الكامل</label>
+                    <input type="text" id="name" required placeholder="أدخل اسمك هنا">
+                </div>
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" required placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="subject">الموضوع</label>
+                    <input type="text" id="subject" required placeholder="عنوان الرسالة">
+                </div>
+                <div class="form-group">
+                    <label for="message">الرسالة</label>
+                    <textarea id="message" required placeholder="اكتب رسالتك هنا..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">إرسال الرسالة</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- التذييل -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>عن الموقع</h4>
+                <p>منصة تعليمية متخصصة في تدريس اللغة العربية وآدابها للطلاب والطالبات بجميع المراحل الدراسية.</p>
+            </div>
+            <div class="footer-section">
+                <h4>روابط سريعة</h4>
+                <a href="#home">الرئيسية</a>
+                <a href="#about">من أنا</a>
+                <a href="#courses">الدروس</a>
+                <a href="#resources">الموارد</a>
+            </div>
+            <div class="footer-section">
+                <h4>معلومات التواصل</h4>
+                <p>📧 ahmed.arabic@email.com</p>
+                <p>📱 +966 50 123 4567</p>
+                <p>📍 الرياض، المملكة العربية السعودية</p>
+            </div>
+            <div class="footer-section">
+                <h4>تابعني على</h4>
+                <div class="social-links">
+                    <a href="#" class="social-link">📘</a>
+                    <a href="#" class="social-link">🐦</a>
+                    <a href="#" class="social-link">📷</a>
+                    <a href="#" class="social-link">▶️</a>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>جميع الحقوق محفوظة © 2025 - الأستاذ أحمد محمد لتعليم اللغة العربية</p>
+        </div>
+    </footer>
+
+    <script>
+        // تمرير سلس للأقسام
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // معالجة نموذج التواصل
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // هنا يمكنك إضافة كود لإرسال البيانات للخادم
+            alert(`شكراً لك يا ${name}! تم استلام رسالتك وسأرد عليك قريباً.`);
+            
+            // إعادة تعيين النموذج
+            event.target.reset();
+        }
+
+        // تأثير ظهور العناصر عند التمرير
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // تطبيق التأثير على جميع البطاقات
+        document.querySelectorAll('.card, .lesson-item, .resource-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // تغيير خلفية الهيدر عند التمرير
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.style.background = 'rgba(26, 26, 46, 0.98)';
+            } else {
+                header.style.background = 'rgba(26, 26, 46, 0.95)';
+            }
+        });
+    </script>
+</body>
+</html>
